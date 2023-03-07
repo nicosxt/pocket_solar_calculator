@@ -151,10 +151,10 @@ Library: lib_burst_generated64
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.VisualScripting.State.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.VisualScripting.Core.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.RenderPipelines.Universal.Runtime.dll
+--root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Assembly-CSharp.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.Services.Core.Environments.Internal.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.Burst.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.TextMeshPro.dll
---root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Assembly-CSharp.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.Timeline.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.RenderPipeline.Universal.ShaderLibrary.dll
 --root-assembly=/Users/xintongshi/Documents/Unity/Pocket_Solar_Calculator/Temp/StagingArea/Data/Managed/Unity.Services.Core.Environments.dll

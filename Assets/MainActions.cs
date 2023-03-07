@@ -68,7 +68,7 @@ public partial class @MainActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""modifier"",
+                    ""name"": ""Modifier"",
                     ""id"": ""09e1d3f9-7e6b-40f9-af6a-8805707235c4"",
                     ""path"": ""<Touchscreen>/primaryTouch/press"",
                     ""interactions"": """",
@@ -79,9 +79,9 @@ public partial class @MainActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""binding"",
+                    ""name"": ""Binding"",
                     ""id"": ""50e3936f-f329-4981-83cf-865f3915c379"",
-                    ""path"": ""<Mouse>/delta"",
+                    ""path"": ""<Touchscreen>/primaryTouch/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -114,7 +114,7 @@ public partial class @MainActions : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""binding"",
                     ""id"": ""53def12f-9e11-4bb8-b47c-a9db6a7c6f99"",
-                    ""path"": ""<Mouse>/delta"",
+                    ""path"": ""<Mouse>/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

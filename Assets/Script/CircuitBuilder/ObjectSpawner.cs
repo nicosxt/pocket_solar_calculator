@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ObjectSpawner : MonoBehaviour
 {
@@ -16,7 +17,17 @@ public class ObjectSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        EventTrigger trigger = GetComponentInChildren<EventTrigger>();
+        EventTrigger.Entry drag = new EventTrigger.Entry();
+        drag.eventID = EventTriggerType.BeginDrag;
+        drag.callback.AddListener((data) => { SpawnObject(); });
+        trigger.triggers.Add(drag);
+
+        EventTrigger.Entry pointerDown = new EventTrigger.Entry();
+        pointerDown.eventID = EventTriggerType.PointerDown;
+        pointerDown.callback.AddListener((data) => { OnPointerDown(); });
+        trigger.triggers.Add(pointerDown);
+
     }
 
     // Update is called once per frame
@@ -25,18 +36,15 @@ public class ObjectSpawner : MonoBehaviour
         
     }
 
-    public void EnterObjectSpawner(){
-        UiManager.s.hoveringObjectSpawner = this;
+    public void OnPointerDown(){
+        //Debug.Log("pointer down");
     }
 
-    public void ExitObjectSpawner(){
-        if(UiManager.s.hoveringObjectSpawner == this){
-            UiManager.s.hoveringObjectSpawner = null;
-        }
+    public void SpawnObject(){
 
-    }
+        //UiManager.s.debugText.text = "Spawn " + gameObject.name;
 
-    public ObjectInstance SpawnObject(){
+        //Debug.Log("spawn " + gameObject.name);
         ObjectInstance obj = Instantiate(objectToSpawn, UiManager.s.bg.transform);
         obj.transform.localEulerAngles = new Vector3(0, 180, 0);
 
@@ -54,8 +62,8 @@ public class ObjectSpawner : MonoBehaviour
             Appliance appliance = (Appliance)obj;
             appliance.operatingA = inputA;
         }
-        
-        return obj;
+
+        UiManager.s.holdingObjectInstance = obj;
     }
 
 }
