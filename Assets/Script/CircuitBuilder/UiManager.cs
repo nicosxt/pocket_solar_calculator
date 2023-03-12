@@ -29,6 +29,7 @@ public class UiManager : MonoBehaviour
 
     [Header("UI")]
     //public bool isOverUI = false;
+    public bool manipulateBackground = false;
     public bool dragBackground = false;
     public bool isTouching = false;
     public GameObject pointingObject;
@@ -58,13 +59,12 @@ public class UiManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerActions.Build.Move.started += DragStart;
-        playerActions.Build.Move.performed += Dragging;
-        playerActions.Build.Move.canceled += DragStop;
-        // playerActions.Build.Touch.started += TouchStart;
-        // playerActions.Build.Touch.performed += Touching;
-        // playerActions.Build.Touch.canceled += TouchStop;
-        playerActions.Build.Zoom.performed += Zooming;
+        if(manipulateBackground){
+            playerActions.Build.Move.started += DragStart;
+            playerActions.Build.Move.performed += Dragging;
+            playerActions.Build.Move.canceled += DragStop;
+            playerActions.Build.Zoom.performed += Zooming;
+        }
     }
 
     void Update()
@@ -107,6 +107,7 @@ public class UiManager : MonoBehaviour
 
     void DragStop(InputAction.CallbackContext ctx) {
         //Debug.Log("Drag Stop");
+
         dragBackground = false;
         if(holdingObjectInstance)
             holdingObjectInstance = null;
@@ -124,18 +125,7 @@ public class UiManager : MonoBehaviour
         bgPos.x = Mathf.Clamp(bgPos.x, -bgMoveMax, bgMoveMax);
         bgPos.y = Mathf.Clamp(bgPos.y, -bgMoveMax, bgMoveMax);
         bg.transform.localPosition = bgPos;
-        //Debug.Log(bgPos);
+
         lastPointerPosition = currentPointerPosition;
     }
-
-
-    // void TouchStart(InputAction.CallbackContext ctx){
-    // }
-
-    // void TouchStop(InputAction.CallbackContext ctx){
-        
-    // }
-
-    // void Touching(InputAction.CallbackContext ctx){
-    // }
 }
