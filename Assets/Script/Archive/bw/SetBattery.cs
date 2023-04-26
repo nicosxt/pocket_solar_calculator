@@ -20,7 +20,7 @@ public class SetBattery : MonoBehaviour
     }
 
     public void OnClick(){
-        GameController.s.batteryOperatingV = operatingV;
-        GameController.s.batteryOperatingAhrs = totalAhrs;
+        GameController.s.batterySingleOperatingV = operatingV;
+        GameController.s.batterySingleOperatingAhrs = totalAhrs;
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class ToggleObject : MonoBehaviour
 {
     public GameObject obj;
+    public GameObject obj2;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +20,9 @@ public class ToggleObject : MonoBehaviour
 
     public void Toggle(){
         obj.SetActive(!obj.activeSelf);
+        if(obj2 != null){
+            obj2.SetActive(!obj2.activeSelf);
+        }
     }
 
 }

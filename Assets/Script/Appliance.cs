@@ -29,6 +29,14 @@ public class Appliance : MonoBehaviour
     }
 
     public void OnClick(){
+        RemoveSelf();
+    }
+
+    public void RemoveSelf(){
+        GameController.s.RemoveAppliance(gameObject);
+    }
+
+    public void ToggleIndicator(){
         isOn = !isOn;
         isOnIndicator.SetActive(isOn);
     }

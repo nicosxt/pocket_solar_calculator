@@ -43,14 +43,16 @@ public class GameController : MonoBehaviour
     public int batterySeriesMax = 5;
     public int batteryParallelMax = 5;
     //each panel
-    public float batteryOperatingV = 12f;
-    public float batteryOperatingAhrs = 0.5f;
+    public float batterySingleOperatingV = 12f;
+    public float batterySingleOperatingAhrs = 0.5f;
     //total setup
     public float batteryTotalV = 0f;
     public float batteryTotalOperatingAhrs = 0f;
     public float batteryTotalCapacity = 0f;
     //current values
     public float batteryCurrentAhrs = 0f;
+    public float batteryCurrentWhrs = 0f;
+    public float batteryDeltaPower = 0f;
 
     //objects
     public GameObject batteryArrayContainer;
@@ -59,12 +61,20 @@ public class GameController : MonoBehaviour
 
     [Header("Appliances")]
     public GameObject applianceContainer;
+    public float applianceCurrentA = 0f;
+    public float applianceCurrentP = 0f;
+
+    [Header("Time")]
+    float chargingRate = 0.33f;
+    public bool isSimulating;
 
     [Header("UI Display")]
     public TextMeshProUGUI solarTotalVText;
     public TextMeshProUGUI solarTotalAText, solarTotalKWText, solarPercentageText;
-    public TextMeshProUGUI batteryTotalVText, batteryTotalAhrText, batteryTotalKWhrText, batteryPercentageText;
+    public TextMeshProUGUI batteryTotalVText, batteryTotalAhrText, batteryTotalKWhrText, batteryPercentageText, batteryDeltaPowerText;
     public TextMeshProUGUI applianceAText, appliancekWText;
+    public Transform batteryFill;
+    public TextMeshProUGUI batteryChargeHint;
 
     void Start(){
         //save these for later
@@ -72,11 +82,13 @@ public class GameController : MonoBehaviour
         //defaultBattery.OnClick();
         solarOperatingA = 4.47f;
         solarOperatingV = 80.6f;
-        batteryOperatingAhrs = 100f;
-        batteryOperatingV = 7.2f;
+        batterySingleOperatingAhrs = 100f;
+        batterySingleOperatingV = 7.2f;
 
         solarParallelAmount = 1;
+        solarSerieisAmount = 3;
         batteryParallelAmount = 1;
+        batterySerieisAmount = 3;
 
         addSolarSeriesButton.onClick.AddListener(AddSolarSeries);
         removeSolarSeriesButton.onClick.AddListener(RemoveSolarSeries);
@@ -178,17 +190,13 @@ public class GameController : MonoBehaviour
             }
         }
 
-        batteryTotalV = batteryOperatingV * batterySerieisAmount;
-        batteryTotalOperatingAhrs = batteryOperatingAhrs * batteryParallelAmount;
+        batteryTotalV = batterySingleOperatingV * batterySerieisAmount;
+        batteryTotalOperatingAhrs = batterySingleOperatingAhrs * batteryParallelAmount;
         batteryTotalCapacity = batteryTotalV * batteryTotalOperatingAhrs;
         
-        //ADD TIME
-        //battery current ahrs = charging time + charging rate
-        //batteryCurrentAhrs
-
         batteryTotalVText.text = batteryTotalV + "V";
-        batteryTotalAhrText.text = batteryTotalOperatingAhrs.ToString("0.0") + "Ah";
-        batteryTotalKWhrText.text = (batteryTotalCapacity/1000f).ToString("0.0") + "kWh";
+        
+        //batteryTotalKWhrText.text = (batteryTotalCapacity/1000f).ToString("0.0") + "kWh";
         //batteryPercentageText.text
     }
 
@@ -200,13 +208,82 @@ public class GameController : MonoBehaviour
             totalA += appliance.operatingA;
         }
         totalP = totalA * 120f;
+        applianceCurrentA = totalA;
+        applianceCurrentP = totalP;
         applianceAText.text = totalA.ToString("0.0") + "A";
         appliancekWText.text = (totalP/1000f).ToString("0.0") + "kW";
+    }
+
+    public void RemoveAppliance(GameObject _appliance){
+        Destroy(_appliance);
+        UpdateAppliances();
     }
 
     public void SetSunAmount(float _amount){
         sunAmount = _amount;
         UpdateSolar();
         UpdateBattery();
+    }
+
+    void Update(){
+
+        batteryDeltaPower = solarCurrentP - applianceCurrentP;
+        if(Mathf.Abs(batteryDeltaPower) < 1000f){
+            batteryDeltaPowerText.text = "In:" + batteryDeltaPower.ToString("0") + "W";
+        }else{
+            batteryDeltaPowerText.text = "In:" + (batteryDeltaPower/1000f).ToString("0.0") + "kW";
+        }
+
+        //update battery current ahrs
+        if(isSimulating){
+
+            float batteryCurrentAhrsLocal = batteryCurrentAhrs;
+            batteryCurrentAhrsLocal += chargingRate * Time.deltaTime * batteryDeltaPower/batteryTotalV;
+            batteryCurrentAhrs = Mathf.Clamp(batteryCurrentAhrsLocal, 0f, batteryTotalOperatingAhrs);
+
+            batteryTotalAhrText.text = batteryCurrentAhrs.ToString("0.0") + "/" + batteryTotalOperatingAhrs.ToString("0.0") + "Ah";
+        }
+
+        //calculate amount of hours needed for batteryCurrentAhrs to reach batteryTotalOperatingAhrs
+        if(batteryDeltaPower > 0){
+            //is charging
+            float batteryAhrsLeft = batteryTotalOperatingAhrs - batteryCurrentAhrs ;
+            float batteryDeltaAhrs = batteryDeltaPower/batteryTotalV;
+            float batteryChargingHrs = batteryAhrsLeft / batteryDeltaAhrs;
+            Debug.Log("battery ahrs left" + batteryAhrsLeft);
+            Debug.Log("battery delta ahrs" + batteryDeltaAhrs);
+            Debug.Log("battery charging hrs" + batteryChargingHrs);
+            if(batteryChargingHrs == 0){
+                batteryChargeHint.text = "full battery";
+            }else{
+                batteryChargeHint.text = batteryChargingHrs.ToString("0.0") + "hrs till full";
+            }
+
+        }else if(batteryDeltaPower < 0){
+            //is dischraging
+            float batteryDeltaAhrs = -1 * batteryDeltaPower/batteryTotalV;
+            float batteryDischargingHrs = batteryCurrentAhrs / batteryDeltaAhrs;
+            if(batteryDischargingHrs == 0){
+                batteryChargeHint.text = "empty battery";
+            }else{
+                batteryChargeHint.text = batteryDischargingHrs.ToString("0.0") + "hrs till empty";
+            }
+            
+
+        }else if(batteryDeltaPower == 0){
+            batteryChargeHint.text = "batteries at rest";    
+        }
+
+        //update battery fill
+        if(batteryTotalOperatingAhrs > 0f){
+            batteryFill.localScale = new Vector3(batteryCurrentAhrs/batteryTotalOperatingAhrs, 1f, 1f);
+        }
+        else{
+            batteryFill.localScale = new Vector3(0f, 1f, 1f);
+        }
+    }
+
+    public void ToggleSimulation(){
+        isSimulating = !isSimulating;
     }
 }
