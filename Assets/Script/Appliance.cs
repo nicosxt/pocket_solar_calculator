@@ -16,7 +16,7 @@ public class Appliance : MonoBehaviour
     {
         button = GetComponentInChildren<Button>();
         button.onClick.AddListener(OnClick);
-        isOnIndicator.GetComponentInChildren<TextMeshProUGUI>().text = operatingA.ToString("0.0") + "A";
+        //isOnIndicator.GetComponentInChildren<TextMeshProUGUI>().text = operatingA.ToString("0.0") + "A";
 
         isOn = false;
         isOnIndicator.SetActive(isOn);
@@ -29,7 +29,8 @@ public class Appliance : MonoBehaviour
     }
 
     public void OnClick(){
-        RemoveSelf();
+        //RemoveSelf();
+        ToggleIndicator();
     }
 
     public void RemoveSelf(){
@@ -39,6 +40,8 @@ public class Appliance : MonoBehaviour
     public void ToggleIndicator(){
         isOn = !isOn;
         isOnIndicator.SetActive(isOn);
+
+        GameController.s.UpdateAppliances();
     }
 
 
