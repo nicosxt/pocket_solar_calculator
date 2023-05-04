@@ -23,5 +23,8 @@ public class AddAppliance : MonoBehaviour
     public void OnClick(){
         GameObject newAppliance = Instantiate(appliancePrefab, GameController.s.applianceContainer.transform);
         GameController.s.UpdateAppliances();
+
+        //reset sibling index of the add button for appliances
+        GameController.s.applianceAddButton.transform.SetSiblingIndex(GameController.s.applianceContainer.transform.childCount - 1);
     }
 }

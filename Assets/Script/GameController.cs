@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour
     }
     [Header("Solar")]
     public float sunAmount;
+    public Transform sunAmountIndicator;
+    public TextMeshProUGUI sunIndicatorText;
 
     public int solarSerieisAmount = 0;
     public int solarParallelAmount = 0;
@@ -38,7 +40,7 @@ public class GameController : MonoBehaviour
     public GameObject solarArrayContainer;
     public Button addSolarSeriesButton, removeSolarSeriesButton, addSolarParallelButton, removeSolarParallelButton;
     public GameObject solarControl;
-    public SetSolar defaultSolar;
+    //public SetSolar defaultSolar;
 
 
     [Header("Battery")]
@@ -64,11 +66,12 @@ public class GameController : MonoBehaviour
     public GameObject batteryArrayContainer;
     public Button addBatterySeriesButton, removeBatterySeriesButton, addBatteryParallelButton, removeBatteryParallelButton;
     public GameObject batteryControl;
-    public SetBattery defaultBattery;
+    //public SetBattery defaultBattery;
+    public Transform batteryFill;
 
     [Header("Appliances")]
     public GameObject applianceContainer;
-    public Button applianceToggleButton;
+    public GameObject applianceAddButton;
     public float applianceCurrentA = 0f;
     public float applianceCurrentP = 0f;
 
@@ -84,11 +87,15 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI solarTotalAText, solarPowerText;
     public TextMeshProUGUI batteryTotalVText, batteryAhrText, batteryDeltaPowerText;
     public TextMeshProUGUI applianceAText, appliancePowerText;
-    public Transform batteryFill;
+
     public TextMeshProUGUI batteryChargeHint, simulationIndicator;
+
+    [Header("Controls")]
+    public GameObject playButton;
 
     void Start(){
         SetCurrentState("configuring");
+        SetSunAmount(0.5f);
         //save these for later
         //defaultSolar.OnClick();
         //defaultBattery.OnClick();
@@ -111,6 +118,7 @@ public class GameController : MonoBehaviour
         removeBatterySeriesButton.onClick.AddListener(RemoveBatterySeries);
         addBatteryParallelButton.onClick.AddListener(AddBatteryParallel);
         removeBatteryParallelButton.onClick.AddListener(RemoveBatteryParallel);
+
 
         UpdateSolar();
         UpdateBattery();
@@ -256,6 +264,16 @@ public class GameController : MonoBehaviour
 
     public void SetSunAmount(float _amount){
         sunAmount = _amount;
+        if(sunAmount == 0){
+            sunIndicatorText.text = "NO SUN :(";
+        }else if(sunAmount == 1){
+            sunIndicatorText.text = "FULL SUN! :D";
+        }else{
+            sunIndicatorText.text = (sunAmount * 100f).ToString("0") + "% SUN";
+        }
+
+        sunAmountIndicator.localScale = new Vector3(sunAmount, 1f, 1f);
+
         UpdateSolar();
         UpdateBattery();
     }
@@ -320,12 +338,13 @@ public class GameController : MonoBehaviour
     public void SetCurrentState(string _state){
         string lastState = currentState;
         if(_state == "configuring"){
-            //pause simulation
-            isPlaying = false;
 
             //set battery to 0
             batteryCurrentAhrs = 0;
             UpdateBatteryAhrText();
+            
+            sunAmountIndicator.GetComponent<Image>().material.SetVector("_UVOffsetSpeed", new Vector2(0f, 0f));
+            batteryFill.GetComponent<Image>().material.SetVector("_UVOffsetSpeed", new Vector2(0f, 0f));
 
             //update controls
             SetControls(true);
@@ -335,45 +354,62 @@ public class GameController : MonoBehaviour
         }else if(_state == "simulating"){
             SetControls(false);
 
+
+            sunAmountIndicator.GetComponent<Image>().material.SetVector("_UVOffsetSpeed", new Vector2(-0.5f, 0f));
+            batteryFill.GetComponent<Image>().material.SetVector("_UVOffsetSpeed", new Vector2(-0.5f, 0f));
+
             //if just switched out of configuring state
-            if(lastState == "configuring"){
-                isPlaying = true;
-                simulationIndicator.text = "simulating...";
-            }
+            simulationIndicator.text = "simulating...";
+        }else if(_state == "paused"){
+            SetControls(false);
+
+            sunAmountIndicator.GetComponent<Image>().material.SetVector("_UVOffsetSpeed", new Vector2(-0.5f, 0f));
+            batteryFill.GetComponent<Image>().material.SetVector("_UVOffsetSpeed", new Vector2(-0.5f, 0f));
+
+            simulationIndicator.text = "paused";
         }
         currentState = _state;
     }
 
-    public void ToggleGameState(){
+
+
+    
+    public void RestartGame(){
+        //pause simulation
+        isPlaying = false;
+        SetCurrentState("configuring");
+        playButton.GetComponent<ToggleObject>().SetObjActive(false);
+    }
+
+    public void SetPlay(){
         if(currentState == "configuring"){
+            //Play for the first time
             SetCurrentState("simulating");
-        }else if(currentState == "simulating"){
-            SetCurrentState("configuring");
+            isPlaying = true;
+            playButton.GetComponent<ToggleObject>().SetObjActive(false);
+        }else if(currentState == "simulating" || currentState == "paused"){
+            //toggle play/pause
+            isPlaying = !isPlaying;
+
+            if(isPlaying){
+                SetCurrentState("simulating");
+            }else{
+                SetCurrentState("paused");
+            }
+
+            //toggle play button icon
+            playButton.GetComponent<ToggleObject>().Toggle();
         }
     }
 
-    public void TogglePlay(){
-
-        if(currentState != "simulating"){
-            return;
-        }
-
-        isPlaying = !isPlaying;
-        if(isPlaying)
-            simulationIndicator.text = "simulating...";
-            else
-            simulationIndicator.text = "paused.";
-        
-    }
 
     public void SetControls(bool _on){
         batteryControl.SetActive(_on);
         solarControl.SetActive(_on);
-        applianceToggleButton.enabled = _on;
+        applianceAddButton.SetActive(_on);
 
         //when it's time to configure
         if(_on){
-            simulationIndicator.text = "configuring...";
             batteryAhrText.text = batteryCurrentAhrs.ToString("0.0") + "/" + batteryTotalOperatingAhrs.ToString("0.0") + "Ah";
         }
     }

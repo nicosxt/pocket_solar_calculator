@@ -18,6 +18,13 @@ public class ToggleObject : MonoBehaviour
         
     }
 
+    public void SetObjActive(bool _activateDefault){
+        obj.SetActive(_activateDefault);
+        if(obj2 != null){
+            obj2.SetActive(!_activateDefault);
+        }
+    }
+
     public void Toggle(){
         obj.SetActive(!obj.activeSelf);
         if(obj2 != null){

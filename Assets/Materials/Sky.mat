@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: sky
+  m_Name: Sky
   m_Shader: {fileID: 4800000, guid: e32cae2a5bbfb41888ef2ba8391ab87d, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -104,11 +104,11 @@ Material:
     - _DirectionYaw: 0
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _Exponent: 0.96
+    - _Exponent: 1.26
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Intensity: 1.2
+    - _Intensity: 0.91
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -124,8 +124,8 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color1: {r: 0, g: 0.27491975, b: 0.8584906, a: 1}
-    - _Color2: {r: 0.21212757, g: 0.19215018, b: 0.32075468, a: 1}
+    - _Color1: {r: 1, g: 0.7261384, b: 0.6745283, a: 1}
+    - _Color2: {r: 0.9692615, g: 1, b: 0.7877358, a: 1}
     - _Direction: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
